@@ -229,3 +229,7 @@ button:active {
 .category-select {
     margin-left: 45rem;
 }
+
+.invisible {
+    visibility: hidden;
+  }
