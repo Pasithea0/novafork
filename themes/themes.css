@@ -87,7 +87,7 @@ label:hover {
 
 /* Button styles with lighting and hover effect */
 button {
-    background-color: #4c00a8;
+    background-color: #9334E9;
     color: #fff;
     border: none;
     padding: 0.75rem 1.5rem;
@@ -99,7 +99,7 @@ button {
 }
 
 button:hover {
-    background-color: #7733cd;
+    background-color: #7523BE;
     box-shadow: 0 6px 12px rgba(48, 38, 38, 0.91), 0 0 15px rgba(194, 99, 228, 0.4); /* Adds a glow effect */
     opacity: 0.9;
     transform: translateY(-2px);
