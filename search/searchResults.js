@@ -263,107 +263,6 @@ document.getElementById('randomButton').addEventListener('click', async function
     }
 });
 
-// Function to fetch popular media
-async function fetchPopularMedia(apiKey, page = 1) {
-    try {
-        const response = await fetch(`https://api.themoviedb.org/3/trending/all/week?api_key=${apiKey}&page=${page}`);
-        if (response.ok) {
-            const data = await response.json();
-            displaySearchResults(data.results);
-            updatePaginationControls(data.page, data.total_pages);
-            fetchUpcomingMedia(apiKey);
-        } else {
-            handleError('Failed to fetch popular media.');
-        }
-    } catch (error) {
-        handleError('An error occurred while fetching popular media:', error);
-    }
-}
-
-// Function to fetch top-rated media
-async function fetchTopRatedMedia(apiKey, page = 1) {
-    try {
-        const response = await fetch(`https://api.themoviedb.org/3/movie/top_rated?api_key=${apiKey}&page=${page}`);
-        if (response.ok) {
-            const data = await response.json();
-            displaySearchResults(data.results);
-            updatePaginationControls(data.page, data.total_pages);
-        } else {
-            handleError('Failed to fetch top-rated media.');
-        }
-    } catch (error) {
-        handleError('An error occurred while fetching top-rated media:', error);
-    }
-}
-
-
-
-// Function to fetch upcoming media
-async function fetchUpcomingMedia(apiKey) {
-    try {
-        const response = await fetch(`https://api.themoviedb.org/3/movie/upcoming?api_key=${apiKey}&language=en-US&page=1`);
-        if (response.ok) {
-            const data = await response.json();
-            const upcomingMovies = data.results.filter(media => new Date(media.release_date) > new Date());
-            displayUpcomingMedia(upcomingMovies);
-        } else {
-            handleError('Failed to fetch upcoming media.');
-        }
-    } catch (error) {
-        handleError('An error occurred while fetching upcoming media:', error);
-    }
-}
-
-// Function to display upcoming media
-function displayUpcomingMedia(mediaList) {
-    const upcomingMedia = document.getElementById('upcomingMedia');
-    if (!upcomingMedia) return;
-
-    upcomingMedia.innerHTML = '';
-
-    mediaList.forEach(media => {
-        const mediaItem = document.createElement('div');
-        mediaItem.classList.add('text-zinc-300', 'mb-2');
-        mediaItem.innerHTML = `<span>${media.title}:</span> <span>${media.release_date}</span>`;
-        upcomingMedia.appendChild(mediaItem);
-    });
-}
-
-// Update pagination controls based on the current category
-function updatePaginationControls(currentPage, totalPages) {
-    const prevPageButton = document.getElementById('prevPage');
-    const nextPageButton = document.getElementById('nextPage');
-    const currentPageSpan = document.getElementById('currentPage');
-
-    if (currentPageSpan) {
-        currentPageSpan.textContent = currentPage;
-    }
-
-    if (prevPageButton) {
-        prevPageButton.disabled = currentPage === 1;
-        prevPageButton.onclick = () => changePage(currentPage - 1);
-    }
-
-    if (nextPageButton) {
-        nextPageButton.disabled = currentPage === totalPages;
-        nextPageButton.onclick = () => changePage(currentPage + 1);
-    }
-}
-
-// Function to change page based on category selection
-function changePage(page) {
-    getApiKey().then(apiKey => {
-        if (apiKey) {
-            const type = document.querySelector('input[name="mediaType"]:checked').value;
-            if (type === 'popular') {
-                fetchPopularMedia(apiKey, page);
-            } else if (type === 'top_rated') {
-                fetchTopRatedMedia(apiKey, page);
-            }
-        }
-    });
-}
-
 // Function to fetch selected media details
 async function fetchSelectedMedia(apiKey, mediaId, mediaType) {
     try {
@@ -384,22 +283,6 @@ async function fetchSelectedMedia(apiKey, mediaId, mediaType) {
     }
 }
 
-
-// Handle media type changes
-document.querySelectorAll('input[name="mediaType"]').forEach(radio => {
-    radio.addEventListener('change', function() {
-        const type = this.value;
-        getApiKey().then(apiKey => {
-            if (apiKey) {
-                if (type === 'popular') {
-                    fetchPopularMedia(apiKey);
-                } else if (type === 'top_rated') {
-                    fetchTopRatedMedia(apiKey);
-                }
-            }
-        });
-    });
-});
 window.addEventListener('popstate', async (event) => {
     if (event.state && event.state.title) {
         const title = event.state.title;
@@ -412,7 +295,6 @@ window.addEventListener('popstate', async (event) => {
         }
     }
 });
-
 
 async function searchMediaByTitle(apiKey, title) {
     try {
@@ -429,13 +311,3 @@ async function searchMediaByTitle(apiKey, title) {
         return null;
     }
 }
-
-// Initial load
-document.addEventListener('DOMContentLoaded', function() {
-    getApiKey().then(apiKey => {
-        if (apiKey) {
-            fetchPopularMedia(apiKey);
-            fetchUpcomingMedia(apiKey);
-        }
-    });
-});
